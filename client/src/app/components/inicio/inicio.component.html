@@ -1,0 +1,71 @@
+<div id="mainCarousel" class="carousel slide carousel-fade shadow" data-bs-ride="carousel">
+  <div class="carousel-inner rounded-3">
+    <div class="carousel-item active">
+      <div class="carousel-image-container">
+        <img src="assets/home.png" class="d-block w-100" alt="Imagen principal">
+        <div class="image-overlay"></div>
+      </div>
+      <!-- Caption mejorado -->
+      <div class="carousel-caption d-none d-md-block text-start">
+        <h2 class="display-5 fw-bold mb-3">Bienvenido</h2>
+        <p class="lead mb-4">Sistema de Supervisión Área Operativa</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tarjetas de opciones mejoradas -->
+<div class="container-fluid mt-4 mb-4">
+  <div class="row g-4">
+    <!-- Tarjeta 1 -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border hover-effect">
+        <div class="card-body text-center p-4 position-relative">
+          <div class="icon-container mb-3 bg-info bg-opacity-10 rounded-3">
+            <i class="bi bi-calendar fs-1 text-info"></i>
+          </div>
+          <span class="badge bg-info text-white position-absolute top-0 end-0 m-2">Actividad Semanal</span>
+          <h5 class="card-title fw-bold mb-3">Registro de Agendas</h5>
+          <p class="card-text text-muted mb-4">Carga de agendas</p>
+          <a routerLink="/recorrido-agenda" class="btn btn-gradient px-4 rounded-pill text-white">
+            Acceder <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Tarjeta 3 -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border hover-effect">
+        <div class="card-body text-center p-4 position-relative">
+          <div class="icon-container mb-3 bg-info bg-opacity-10 rounded-3">
+            <i class="fa-solid fa-calendar-check fs-1 text-info"></i>
+          </div>
+          <span class="badge bg-info text-white position-absolute top-0 end-0 m-2">Actividad Diaria</span>
+          <h5 class="card-title fw-bold mb-3">Agendas</h5>
+          <p class="card-text text-muted mb-4">Seguimiento de Agendas</p>
+          <a routerLink="/recorrido-agenda" class="btn btn-gradient px-4 rounded-pill text-white">
+            Acceder <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2 -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border hover-effect">
+        <div class="card-body text-center p-4 position-relative">
+          <div class="icon-container mb-3 bg-info bg-opacity-10 rounded-3">
+            <i class="bi bi-ticket-perforated fs-1 text-info"></i>
+          </div>
+          <span class="badge bg-info text-white position-absolute top-0 end-0 m-2">Actividad Diaria</span>
+          <h5 class="card-title fw-bold mb-3">Vaucher, Depositos y Transferencias</h5>
+          <p class="card-text text-muted mb-4">Gestión de vouchers reportados por coordinación</p>
+          <a routerLink="/baucher" class="btn btn-gradient px-4 rounded-pill text-white">
+            Acceder <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

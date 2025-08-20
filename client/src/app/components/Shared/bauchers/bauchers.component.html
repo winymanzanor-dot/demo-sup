@@ -1,0 +1,342 @@
+<!-- Formulario de Registro de Vouchers Mejorado -->
+<div class="accordion custom-accordion mt-4" id="accordionFormBaucher">
+  <div class="accordion-item border-0 shadow-sm rounded">
+    <h2 class="accordion-header">
+      <button class="accordion-button bg-primary text-white fw-bold rounded-top" type="button"
+        data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <i class="fas fa-file-invoice-dollar me-2"></i>
+        Registro de Vouchers
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionFormBaucher">
+      <div class="accordion-body bg-light">
+        <form class="p-4 bg-white rounded-bottom shadow-sm" [formGroup]="baucherForm" (ngSubmit)="agregarBaucher()">
+          <h4 class="text-center text-primary fw-bold mb-4">
+            <i class="fas fa-file-alt me-2"></i>
+            Formulario de Registro
+          </h4>
+
+          <!-- Sección de Coordinación -->
+          <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
+              <i class="fas fa-users-cog me-2"></i>
+              <h5 class="mb-0 fw-bold">Datos de Coordinación</h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="coordinacion" class="form-label fw-semibold">Coordinación <span class="text-danger">*</span></label>
+                  <select class="form-select" id="coordinacion" formControlName="coordinacion" 
+                          (change)="filtrarPersonas()" [disabled]="isEditing">
+                    <option disabled selected value="">Seleccionar coordinación</option>
+                    <option *ngFor="let coord of coordinaciones" [ngValue]="coord">
+                      {{ coord.municipio }} - {{ coord.nombre }}
+                    </option>
+                  </select>
+                  <div class="invalid-feedback d-block" *ngIf="baucherForm.get('coordinacion')?.invalid && baucherForm.get('coordinacion')?.touched">
+                    Por favor seleccione una coordinación
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="ejecutiva" class="form-label fw-semibold">Ejecutiva/Coordinador <span class="text-danger">*</span></label>
+                  <select class="form-select" id="ejecutiva" formControlName="ejecutiva" [disabled]="isEditing">
+                    <option disabled selected value="">Seleccionar persona</option>
+                    <option *ngFor="let persona of personasFiltradas" [ngValue]="persona">
+                      {{ persona.nombre }}
+                    </option>
+                  </select>
+                  <div class="invalid-feedback d-block" *ngIf="baucherForm.get('ejecutiva')?.invalid && baucherForm.get('ejecutiva')?.touched">
+                    Por favor seleccione una persona
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista de Vouchers -->
+          <div formArrayName="vouchers">
+            <div *ngFor="let voucher of vouchers.controls; let i = index; let last = last" [formGroupName]="i" class="voucher-card mb-4">
+              <div class="card border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                  <div>
+                    <i class="fas fa-receipt me-2"></i>
+                    <span class="fw-bold">Voucher #{{ i + 1 }}</span>
+                  </div>
+                  <button *ngIf="vouchers.length > 1" type="button" class="btn btn-sm btn-outline-light" (click)="eliminarVoucher(i)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <div class="card-body">
+                  <!-- Sección de Fechas -->
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Fecha y Hora de Pago <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="fas fa-calendar-alt text-primary"></i></span>
+                        <input type="datetime-local" class="form-control" formControlName="fechaBaucher">
+                      </div>
+                      <small class="text-muted">Ingrese la hora y fecha que aparecen en el voucher recibido</small>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Fecha de Reporte <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="fas fa-calendar-check text-primary"></i></span>
+                        <input type="datetime-local" class="form-control" formControlName="fechaReporte">
+                      </div>
+                      <small class="text-muted">Ingrese la hora y fecha en la que se reportó el voucher</small>
+                    </div>
+                  </div>
+                  
+                  <!-- Sección de Información del Voucher -->
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold">Grupo</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="fas fa-users text-primary"></i></span>
+                        <input type="text" class="form-control" formControlName="grupo" placeholder="Ej: Grupo 5">
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold">Concepto</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="fas fa-comment-dollar text-primary"></i></span>
+                        <input type="text" class="form-control" formControlName="concepto" placeholder="Ej: Pago mensual">
+                      </div>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                      <label class="form-label fw-semibold">Observaciones</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="fas fa-notes-medical text-primary"></i></span>
+                        <textarea class="form-control" formControlName="titular" placeholder="Ej: Voucher ilegible" rows="2"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Separador visual entre vouchers -->
+              <div *ngIf="!last" class="d-flex align-items-center my-3">
+                <hr class="flex-grow-1 border-primary">
+                <span class="px-3 text-primary fw-bold">Siguiente Voucher</span>
+                <hr class="flex-grow-1 border-primary">
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="d-flex flex-wrap justify-content-between mt-4 pt-3 border-top">
+            <div>
+              <button type="button" class="btn btn-outline-secondary me-2" (click)="resetForm()">
+                <i class="fas fa-eraser me-1"></i> Limpiar
+              </button>
+              <button type="button" class="btn btn-outline-primary" (click)="agregarVoucher()">
+                <i class="fas fa-plus me-1"></i> Añadir Voucher
+              </button>
+            </div>
+            <button type="submit" class="btn btn-success px-4" [disabled]="baucherForm.invalid">
+              <i class="fas fa-save me-1"></i> {{ editingBaucherId ? 'Actualizar' : 'Guardar' }}
+              <span *ngIf="vouchers.length > 1" class="badge bg-white text-success ms-2">{{ vouchers.length }} vouchers</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabla de Vouchers Registrados -->
+<div class="card mt-4 border-0 shadow-lg rounded-4">
+  <div class="card-header bg-light border-bottom-0 py-3 rounded-top-4">
+    <div class="container-fluid">
+      <div class="row align-items-center justify-content-between gy-2">
+
+        <!-- Título -->
+        <div class="col-md-auto text-center text-md-start">
+          <h4 class="fw-semibold text-primary mb-0">
+            <i class="fas fa-file-invoice-dollar me-2"></i>
+            Vouchers Registrados
+          </h4>
+        </div>
+
+        <!-- Filtro por fecha -->
+        <div class="col-md-auto">
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fas fa-calendar-day text-secondary"></i>
+            </span>
+            <input
+              type="date"
+              class="form-control border-start-0 ps-1"
+              [(ngModel)]="fechaFiltro"
+              (ngModelChange)="filtrarPorFecha()"
+            >
+          </div>
+        </div>
+
+        <!-- Buscador -->
+        <div class="col-md-auto">
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fas fa-search text-secondary"></i>
+            </span>
+            <input
+              type="search"
+              class="form-control border-start-0 ps-2"
+              [(ngModel)]="filtrarBaucher"
+              placeholder="Buscar voucher..."
+            >
+          </div>
+        </div>
+
+        <!-- Botón exportar -->
+        <div class="col-md-auto">
+        <!-- Botón para abrir el modal -->
+        <button class="btn btn-outline-primary shadow-sm me-2"
+                title="Generar reporte"
+                (click)="generarDatosReporte()" 
+                data-bs-toggle="modal" data-bs-target="#reporteModal">
+          <i class="bi bi-bar-chart me-1"></i> Reporte
+        </button>
+
+
+          <button class="btn btn-outline-success shadow-sm"
+          title="Exportar a excel"
+          (click)="exportarExcel()">
+            <i class="fas fa-file-excel me-2"></i>Exportar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-center">
+          <tr class="align-middle">
+            <th>Coordinación</th>
+            <th>Responsable</th>
+            <th>Fecha Pago</th>
+            <th>Hora</th>
+            <th>Fecha Reporte</th>
+            <th>Hora</th>
+            <th>Diferencia</th>
+            <th>Grupo</th>
+            <th>Concepto</th>
+            <th>Observaciones</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let baucher of paginatedBauchers">
+            <td class="text-center">{{ baucher.coordinacion.nombre }}</td>
+            <td class="text-center">{{ baucher.ejecutiva || baucher.coordinador }}</td>
+            <td class="text-center">{{ baucher.fechaBaucher | date: 'dd-MM-yy' }}</td>
+            <td class="text-center">{{ baucher.fechaBaucher | date: 'HH:mm' }}</td>
+            <td class="text-center">{{ baucher.fechaReporte | date: 'dd-MM-yy' }}</td>
+            <td class="text-center">{{ baucher.fechaReporte | date: 'HH:mm' }}</td>
+            <td class="text-center">
+              <span class="badge rounded-pill px-3 py-2 fs-6" [ngClass]="{
+                'bg-danger': baucher.diasDiferencia > 3,
+                'bg-warning text-dark': baucher.diasDiferencia > 1 && baucher.diasDiferencia <= 3,
+                'bg-success': baucher.diasDiferencia <= 1
+              }">
+                {{ baucher.diasDiferencia }}
+              </span>
+            </td>
+            <td class="text-center">{{ baucher.grupo }}</td>
+            <td class="text-center">{{ baucher.concepto }}</td>
+            <td class="text-center">{{ baucher.titular }}</td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-sm btn-outline-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                  (click)="cargarBaucherParaEditar(baucher)" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" 
+                  (click)="eliminarBaucher(baucher._id)" title="Eliminar">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+        <h6 class="fw-bold-2 text-end">
+          📄 Vouchers totales registrados:
+          <span class="badge bg-primary">{{vouchersTotales}}</span>
+        </h6>
+      <!-- Paginación -->
+      <div class="p-3 border-top" *ngIf="totalPages > 1">
+        <nav aria-label="Paginación de vouchers">
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="changePage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a class="page-link" (click)="changePage(currentPage + 1)">
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!---MODAL DE REPORTES-->
+<!-- Modal del reporte -->
+<div class="modal fade" id="reporteModal" tabindex="-1" aria-labelledby="reporteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="reporteModalLabel">Reporte General</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Contenido del reporte a capturar como PDF -->
+        <div id="contenidoReporte">
+          <h5>Personas con mayor número de incidencias, vouchers enviados, mayores atrasos, coordinaciones que más reportan</h5>
+          <!-- Aquí puedes insertar tablas o gráficos con tus datos -->
+          <canvas id="graficaVouchers" width="400" height="200"></canvas>
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Responsable</th>
+                <th>Total Incidencias</th>
+                <th>Total Vouchers</th>
+                <th>Días de Atraso</th>
+                <th>Coordinación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of reporteResumen">
+                <td>{{ r.responsable }}</td>
+                <td>{{ r.totalTitulares }}</td>
+                <td>{{ r.totalVouchers }}</td>
+                <td>{{ r.diasAtraso }}</td>
+                <td>{{ r.coordinacion }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <canvas id="graficaAtraso" width="400" height="200"></canvas>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-success" (click)="descargarPDF()">Descargar PDF</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

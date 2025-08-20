@@ -1,0 +1,217 @@
+
+<div class="container-fluid mt-4 mb-4">
+  <button type="button" class="btn btn-success mt-2 mb-2" title="Importar agendas desde excel" routerLink="/subir-agendas">Importar agenda <i class="bi bi-box-arrow-in-down"></i></button>
+  <div class="card shadow-sm bg-body-tertiary rounded w-100 overflow-hidden">
+    <div class="card-body p-0">
+        <!-- CONTENIDO PRINCIPAL -->
+      <div class="container-fluid mt-4 mb-4">
+        <div class="row g-4">
+          <!-- FORMULARIO DE REGISTRO -->
+            <form class="h-100" [formGroup]="registrarAgenda" (ngSubmit)="RegistrarAgenda()">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                  <h4 class="mb-0"><i class="bi bi-calendar-plus me-2"></i>Registro de Agenda</h4>
+
+                </div>
+                
+                <div class="card-body overflow-auto" style="max-height: 80vh;">
+                  <!-- Sección de información básica -->
+                  <div class="card mb-3 shadow-sm">
+                    <div class="card-header bg-light">
+                      <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Información General</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3 mb-4">
+                        <div class="col-md-12">
+                          <div class="form-floating">
+                            <select class="form-select border-2 border-primary rounded-3 shadow-sm" 
+                                    id="coordinador" 
+                                    formControlName="coordinador"
+                                    style="height: 60px; font-size: 1.1rem;">
+                              <option disabled selected value="">Seleccione el coordinador</option>
+                              <option *ngFor="let coord of coordinaciones" 
+                                      [value]="coord.coordinador[0].nombre"
+                                      class="fw-medium">
+                                {{ coord.coordinador[0].nombre }}
+                              </option>
+                            </select>
+                            <label for="coordinador" class="fw-bold text-primary">
+                              <i class="bi bi-person-badge me-2"></i>Coordinador
+                            </label>
+                          </div>
+                          
+                          <!-- Mensaje de validación -->
+                          <div *ngIf="registrarAgenda.get('coordinador')?.invalid && registrarAgenda.get('coordinador')?.touched" 
+                              class="invalid-feedback d-flex align-items-center mt-2 animate__animated animate__fadeIn">
+                            <i class="bi bi-exclamation-circle-fill me-2 text-danger"></i>
+                            Por favor seleccione un coordinador
+                          </div>
+                          
+                          <!-- Indicador visual -->
+                          <div class="d-flex justify-content-end mt-2">
+                            <span class="badge bg-primary bg-gradient rounded-pill px-3 py-2">
+                              <i class="bi bi-people-fill me-1"></i>
+                              {{ coordinaciones.length }} coordinadores disponibles
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row g-3">
+                        <!-- Semana -->
+                        <div class="col-md-6">
+                          <label for="semana" class="form-label fw-bold">Semana</label>
+                          <select class="form-select" id="semana" formControlName="semana">
+                            <option disabled selected value="">Seleccione semana</option>
+                            <option *ngFor="let semana of semanas" [value]="semana">{{ semana }}</option>
+                          </select>
+
+                        </div>
+                        
+                        <!-- Fecha -->
+                        <div class="col-md-6">
+                          <label for="fecha" class="form-label fw-bold">Fecha</label>
+                          
+                          <input type="date" class="form-control" id="fecha" formControlName="fecha">
+
+                        </div>
+                        
+                        <!-- Objetivo -->
+                        <div class="col-6">
+                          <label for="objetivo" class="form-label fw-bold">Objetivo semanal</label>
+                          <input type="text" class="form-control" id="objetivo" formControlName="objetivo" rows="2">
+                        </div>
+                      <div class="col-6">
+                          <label for="meta" class="form-label fw-bold">Meta</label>
+                          <textarea class="form-control" id="meta" formControlName="meta" rows="2"></textarea>
+                        </div>
+                        <!-- Switch de cumplimiento -->
+                        <div class="col-12">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="switchAgenda" formControlName="cumplimientoAgenda">
+                            <label class="form-check-label fw-bold" for="switchAgenda">Agenda en tiempo</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Lista de actividades -->
+                  <div formArrayName="actividades" class="mb-3">   
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 class="mb-0"><i class="bi bi-list-task me-2"></i>Actividades</h5>
+                    </div>                 
+                    <div *ngFor="let actividad of actividades.controls; let i = index" [formGroupName]="i" 
+                        class="card mb-3 shadow-sm border-start-3 border-primary">
+                      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">Actividad {{ i + 1 }}</span>
+                        <button type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="eliminarActividad(i)" *ngIf="actividades.length > 1">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                      
+                      <div class="card-body">
+                        <div class="row g-3">
+                          <!-- Hora -->
+                          <div class="col-md-3">
+                            <label class="form-label">Hora</label>
+                            <input type="time" class="form-control" formControlName="hora">
+                          </div>
+                          
+                          <!-- Domicilio -->
+                          <div class="col-md-9">
+                            <label class="form-label">Domicilio</label>
+                            <input type="text" class="form-control" formControlName="domicilio"
+                                placeholder="Domicilio donde se realizará la actividad">
+                          </div>
+                          
+                          <!-- Actividad -->
+                          <div class="col-md-6">
+                            <label class="form-label">Actividad</label>
+                            <textarea type="text" class="form-control" formControlName="actividad" 
+                                  placeholder="Descripción de la actividad"></textarea>
+                          </div>
+                          <!-- Check actividad orientada a objetivo -->
+                          <div class="col-md-6 shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+                          <label class="form-label">Actividad acorde al objetivo semanal</label>
+
+                            <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="switchAgenda" formControlName="acordeObjetivo">
+                            <label class="form-check-label text-body-secondary" for="checkChecked">
+                                Marcar casilla si la actividad es para cumplimiento del objetivo semanal
+                              </label>
+                          </div>
+                          </div>
+
+
+                          <!-- Código -->
+                          <select class="form-select" formControlName="codigo">
+                            <option disabled selected value="">Seleccione código</option>
+                            <option
+                              *ngFor="let opcion of opcionesCodigo"
+                              [value]="opcion.value"
+                              [ngStyle]="{ 'background-color': opcion.color }"
+                            >
+                              {{ opcion.texto }}
+                            </option>
+                          </select>
+
+                          
+                          <!-- Traslado -->
+                          <div class="col-md-6">
+                            <label class="form-label d-block">Traslado</label>
+                            <div class="btn-group btn-group-sm" role="group">
+                              <input type="radio" class="btn-check" formControlName="traslado" value="SI" id="trasladoSi{{i}}">
+                              <label class="btn btn-outline-success" for="trasladoSi{{i}}">Sí</label>
+                              
+                              <input type="radio" class="btn-check" formControlName="traslado" value="NO" id="trasladoNo{{i}}">
+                              <label class="btn btn-outline-secondary" for="trasladoNo{{i}}">No</label>
+                            </div>
+                          </div>
+                          
+                          <!-- KM Recorridos (condicional) -->
+                          <div class="col-md-6" *ngIf="actividad.get('traslado')?.value === 'SI'">
+                            <label class="form-label">KM Recorridos</label>
+                            <div class="input-group">
+                              <input type="number" class="form-control" formControlName="kmRecorrido" min="0" step="0.1">
+                              <span class="input-group-text">km</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="agregarActividad()"
+                        aria-label="Agregar nueva actividad">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Agregar
+                      </button>
+
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        aria-label="Guardar agenda"
+                        
+                        >
+                        <i class="bi bi-save me-1"></i>
+                        
+                        Guardar Agenda
+                      </button>
+                    </div>
+                </div>
+              </div>
+            </form>          
+
+      </div>
+    <!--FIN CONTENIDO-->
+    </div>
+  </div>
+</div>
+</div>
+

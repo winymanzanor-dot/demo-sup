@@ -1,0 +1,783 @@
+<div class="container-fluid mt-4 mb-4">
+  <div class="card shadow-sm bg-body-tertiary rounded w-100 overflow-hidden">
+    <div class="card-body p-0">
+      <!-- Pestañas de coordinadores -->
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button 
+            *ngFor="let c of coordinaciones; let i = index"
+            class="nav-link position-relative coordinador-tab"
+            [ngClass]="{
+              'coordinador-0': i === 0,
+              'coordinador-1': i === 1,
+              'coordinador-2': i === 2,
+              'coordinador-3': i === 3,
+              'coordinador-4': i === 4,
+              'coordinador-5': i === 5,
+              'coordinador-6': i === 6,
+              'coordinador-7': i === 7
+            }"
+            [class.active]="coordinadorVisible === c.coordinador[0].nombre"
+            [id]="'nav-' + c.coordinador[0].nombre + '-tab'"
+            data-bs-toggle="tab"
+            [attr.data-bs-target]="'#nav-' + c.coordinador[0].nombre"
+            type="button"
+            role="tab"
+            [attr.aria-controls]="'nav-' + c.coordinador[0].nombre"
+            [attr.aria-selected]="coordinadorVisible === c.coordinador[0].nombre"
+            (click)="mostrarDiv(c.coordinador[0].nombre)"
+          >
+            <span class="tab-label">{{ c.coordinador[0].nombre }}</span>
+            <span class="tab-indicator"></span>
+          </button>
+        </div>
+      </nav>
+        <!-- CONTENIDO PRINCIPAL -->
+      <div class="container-fluid mt-4 mb-4">
+        <div class="row g-4">
+
+          
+          <!-- TABLA DE SEGUIMIENTO -->
+              
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-table me-2"></i>Seguimiento de Agenda</h4>
+                <button type="button" class="btn btn-sm btn-light" (click)="refrescarAgendas()">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+              
+              <div class="card-body p-0 overflow-auto" style="max-height: 80vh;">
+                <!-- Filtros -->
+                <div class="p-3 bg-light border-bottom">
+                  <h5 class="mb-3"><i class="bi bi-funnel me-2"></i>Filtros</h5>
+          
+                <div class="row g-3">
+                  <!-- Mes -->
+                  <div class="col-md-4">
+                    <label for="mesSelect" class="form-label fw-bold">Mes</label>
+                    <select class="form-select" id="mesSelect" [(ngModel)]="mesSeleccionado" (change)="aplicarFiltros()">
+                      <option value="" disabled>Seleccione mes</option>
+                      <option *ngFor="let mes of meses" [value]="mes">{{ mes }}</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Semana -->
+                  <div class="col-md-4">
+                    <label for="semanaSelect" class="form-label fw-bold">Semana</label>
+                    <select class="form-select" id="semanaSelect" [(ngModel)]="semanaSeleccionada" (change)="aplicarFiltros()">
+                      <option value="" disabled>Seleccione semana</option>
+                      <option *ngFor="let semana of semanas" [value]="semana">{{ semana }}</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Día -->
+                  <div class="col-md-4">
+                    <label for="diaSelect" class="form-label fw-bold">Día</label>
+                    <select class="form-select" id="diaSelect" [(ngModel)]="diaSeleccionado" (change)="aplicarFiltros()">
+                      <option value="" disabled>Seleccione día</option>
+                      <option *ngFor="let dia of diasSemana" [value]="dia">{{ dia }}</option>
+                    </select>
+                  </div>
+                </div>
+                  <div class="row g-3">
+                    <!-- Código -->
+                      <div class="col-md-4">
+                        <label for="codigoSelect" class="form-label fw-bold">Código</label>
+                        <select class="form-select" id="codigoSelect" [(ngModel)]="codigoSeleccionado" (change)="aplicarFiltros()">
+                          <option value="">Todos los códigos</option>
+                          <option *ngFor="let opcion of opcionesCodigo" [value]="opcion.value">{{ opcion.texto }}</option>
+                        </select>
+                      </div>
+
+                      <!-- Código Reportado -->
+                      <div class="col-md-4">
+                        <label for="codigoReportadoSelect" class="form-label fw-bold">Código Reportado</label>
+                        <select class="form-select" id="codigoReportadoSelect" [(ngModel)]="codigoReportadoSeleccionado" (change)="aplicarFiltros()">
+                          <option value="">Todos los códigos reportados</option>
+                          <option *ngFor="let opcion of opcionesCodigo" [value]="opcion.value">{{ opcion.texto }}</option>
+                        </select>
+                      </div>
+
+                    <!-- Estado -->
+                    <div class="col-md-4">
+                      <label class="form-label fw-bold">Estado</label>
+                      <select class="form-select" [(ngModel)]="estadoSeleccionado" (change)="aplicarFiltros()">
+                        <option value="" disabled selected>Seleccione estado</option>
+                        <option value="reportado">Reportado</option>
+                        <option value="no reportado">No reportado</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                <!-- Botón para limpiar filtros -->
+                <div class="d-flex justify-content-end mt-3">
+                  <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
+                    <i class="bi bi-x-circle me-1"></i> Limpiar filtros
+                  </button>
+                </div>
+
+                
+                <!-- Estadísticas de gastos -->
+                <div class="p-3 border-bottom">
+                  <h5 class="mb-3"><i class="bi bi-graph-up me-2"></i>Estadísticas</h5>
+                  
+                  <div class="row g-3">
+                    <!-- KM Recorridos -->
+                    <div class="col-md-3">
+                      <label class="form-label fw-bold">KM Recorridos</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" [value]="totalKmRecorridos" disabled>
+                        <span class="input-group-text">km</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Litros Gasolina -->
+                    <div class="col-md-3">
+                      <label class="form-label fw-bold">Litros Gasolina</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" [value]="litrosGasolina" disabled>
+                        <span class="input-group-text">L</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Costo Gasolina -->
+                    <div class="col-md-3">
+                      <label class="form-label fw-bold">Costo Gasolina</label>
+                      <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" [(ngModel)]="precioPorLitro" min="0" step="0.01">
+                        <span class="input-group-text">/L</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="col-md-3">
+                      <label class="form-label fw-bold">Total</label>
+                      <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="text" class="form-control fw-bold" [value]="costoTotalGasolina" disabled>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row g-3 mt-2">
+                    <!-- Horas de trabajo -->
+                    <div class="col-md-4">
+                      <label class="form-label fw-bold">Horas de trabajo</label>
+                      <div class="input-group">
+                        <input type="number" class="form-control" [(ngModel)]="horasTrabajo" min="140">
+                        <span class="input-group-text">h/mes</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Horas agendadas -->
+                    <div class="col-md-4">
+                      <label class="form-label fw-bold">Horas agendadas</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" [value]="horasAgendadas" disabled>
+                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                      </div>
+                    </div>
+                    
+                    <!-- Horas reportadas -->
+                    <div class="col-md-4">
+                      <label class="form-label fw-bold">Horas reportadas</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" [value]="horasReportadas" disabled>
+                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Tabla de actividades - Diseño Mejorado -->
+                <div class="table-responsive rounded-3 border shadow-sm">
+
+                <!-- Tabla de actividades -->
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                      <tr>
+                        <th class="text-center" style="width: 100px;">Fecha</th>
+                        <th class="text-center" style="width: 80px;">Hora</th>
+                        <th style="min-width: 180px;">Actividad</th>
+                        <th class="text-center" style="min-width: 40px;">Código</th>
+                        <th style="min-width: 180px;">Actividad Reportada</th>
+                        <th class="text-center" style="min-width: 40px;">Código Reportado</th>
+                        <th class="text-center" style="width: 100px;">Estado</th>
+                        <th class="text-center" style="width: 100px;">Inicio</th>
+                        <th class="text-center" style="width: 100px;">Cierre</th>
+                        <th class="text-center" style="width: 100px;">Agenda recibida a tiempo</th>
+                        <th class="text-center" style="width: 100px;">Acciones</th>
+                      </tr>
+                    </thead>
+                    
+                    <tbody>
+                      <tr *ngFor="let agenda of agendasFiltradasPorCoordinador" class="border-bottom">
+                        <!-- Fecha -->
+                        <td class="text-center">
+                          <div class="d-flex flex-column">
+                            <span class="fw-bold text-primary">{{ agenda.fecha | date:'dd' }}</span>
+                            <span class="small text-muted">{{ agenda.fecha | date:'MMM yy' }}</span>
+                          </div>
+                        </td>
+                        
+                        <!-- Hora -->
+                        <td class="text-center">
+                          <span class="badge bg-light text-dark">{{ agenda.hora }}</span>
+                        </td>
+                        
+                        <!-- Actividad -->
+                        <td>
+                          <div class="text-truncate" style="max-width: 180px;" [title]="agenda.actividad">
+                            {{ agenda.actividad }}
+                          </div>
+                        </td>
+                          <!---Código---->
+                        <td>
+                          <div class="text-center" style="max-width: 180px;" [title]="agenda.codigo">
+                           <span class="badge text-bg-warning"> {{ agenda.codigo }} </span>
+                          </div>
+                        </td>
+                        
+                        <!-- Actividad Reportada -->
+                        <td>
+                          <div class="text-truncate" style="max-width: 180px;" [title]="agenda.actividadReportada">
+                            {{ agenda.actividadReportada || '--' }}
+                          </div>
+                        </td>
+
+                        <td>
+                          <div class="text-center" style="max-width: 180px;" [title]="agenda.codigoReportado">
+                           <span class="badge text-bg-success"> {{ agenda.codigoReportado }} </span>
+                          </div>
+                        </td>
+                        
+                        <!-- Estado Reportado -->
+                        <td class="text-center">
+                          <span class="badge py-2" 
+                                [ngClass]="{
+                                  'bg-success-light text-success': agenda.reportado,
+                                  'bg-danger-light text-danger': !agenda.reportado
+                                }">
+                            <i class="bi me-1" [ngClass]="agenda.reportado ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+                            {{ agenda.reportado ? 'R' : 'NREP' }}
+                          </span>
+                        </td>
+                        
+                        <!-- Hora Inicio -->
+                        <td class="text-center">
+                          <span class="badge bg-light text-dark" *ngIf="agenda.horaReporte; else noReporte">
+                            {{ agenda.horaReporte }}
+                          </span>
+                          <ng-template #noReporte>
+                            <span class="badge bg-light text-muted">--:--</span>
+                          </ng-template>
+                        </td>
+                        
+                        <!-- Hora Cierre -->
+                        <td class="text-center">
+                          <span class="badge bg-light text-dark" *ngIf="agenda.horaCierre; else noCierre">
+                            {{ agenda.horaCierre }}
+                          </span>
+                          <ng-template #noCierre>
+                            <span class="badge bg-light text-muted">--:--</span>
+                          </ng-template>
+                        </td>
+                                             
+                        
+                        <!-- Estado Cumplimiento -->
+                        <td class="text-center">
+                          <span class="badge py-2" 
+                                [ngClass]="{
+                                  'bg-success-light text-success': agenda.cumplimientoAgenda,
+                                  'bg-danger-light text-danger': !agenda.cumplimientoAgenda
+                                }">
+                            <i class="bi me-1" [ngClass]="agenda.cumplimientoAgenda ? 'bi-check-circle-fill' : 'bi-clock-history'"></i>
+                            {{ agenda.cumplimientoAgenda ? '' : '' }}
+                          </span>
+                        </td>
+                        
+                        <!-- Acciones -->
+                        <td class="text-center">
+                          <div class="d-flex justify-content-center">
+                            <button class="btn btn-sm btn-icon btn-outline-primary me-2"
+                                    title="Editar"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editarActividad"
+                                    (click)="editarActividad(agenda)">
+                              <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button class="btn btn-sm btn-icon btn-outline-danger" 
+                                    title="Eliminar"
+                                    (click)="eliminarRegistro(agenda._id)">
+                              <i class="bi bi-trash3"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      
+                      <!-- Mensaje cuando no hay datos -->
+                      <tr *ngIf="!agendasFiltradasPorCoordinador?.length">
+                        <td colspan="11" class="text-center py-4 text-muted">
+                          <i class="bi bi-inbox me-2"></i> No se encontraron actividades registradas
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              
+                    <!-- Botón de reporte -->
+                  <div class="p-3 text-center border-top">
+                    <button class="btn btn-primary" (click)="mostrarGraficas()">
+                      <i class="bi bi-file-earmark-bar-graph me-2"></i>Generar Reporte
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!---->
+            </div>
+        </div>
+          <div *ngIf="mostrarContenedorGraficas" class="col-12 mt-4">
+            <div class="card shadow-sm">
+              <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>Reporte de Actividades</h4>
+                <div>
+                  <button class="btn btn-sm btn-light me-2" (click)="generarPDFConGrafica()">
+                    <i class="bi bi-file-pdf me-1"></i>PDF
+                  </button>
+                  <button class="btn btn-sm btn-light" (click)="mostrarGraficas()">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="card-body mb-4 p-3">
+                <div #reportePDF class="position-relative">
+                <!-- Resumen estadístico -->
+                <div class="row mb-4">
+                  <p class="text-center" style="font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px;">
+                    Reporte Mensual - Mes: {{ mesSeleccionado }}
+                  </p>
+
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Coordinador</h6>
+                        <h4 class="fw-bold text-primary">{{coordinadorVisible}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Horas laborables del Mes</h6>
+                        <h4 class="fw-bold">{{horasTrabajo}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Horas Agendadas</h6>
+                        <h4 class="fw-bold text-warning">{{horasAgendadas}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Horas Reportadas</h6>
+                        <h4 class="fw-bold text-success">{{horasReportadas}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!--ENTREGAS-->
+                <div class="row mb-4">
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Entregas programadas</h6>
+                        <h4 class="fw-bold text-info">{{horasEntregas}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Entregas reportadas</h6>
+                        <h4 class="fw-bold text-success">{{horasEntregasReportadas}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Entregas no reportadas</h6>
+                        <h4 class="fw-bold text-danger">{{horasEntregasNoReportadas}}</h4>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                      <div class="card-body text-center">
+                        <h6 class="text-muted">Horas productivas</h6>
+                        <h4 class="fw-bold text-primary">{{horasProductividad}}%</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <table class="table table-bordered table-striped text-center align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Actividad</th>
+                      <th>Horas Agendadas</th>
+                      <th>Horas Reportadas</th>
+                      <th>Logro</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Revisión Matutina -->
+                    <tr>
+                      <th scope="row">Revisión Matutina</th>
+                      <td>{{ horasAM }}</td>
+                      <td>{{ horasAMReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasAMReportadas === horasAM,
+                          'text-bg-danger': horasAMReportadas < horasAM
+                        }">
+                          {{ horasAMReportadas === horasAM ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Supervisiones -->
+                    <tr>
+                      <th scope="row">Supervisiones</th>
+                      <td>{{ horasSup }}</td>
+                      <td>{{ horasSupReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasSupReportadas === horasSup,
+                          'text-bg-danger': horasSupReportadas < horasSup
+                        }">
+                          {{ horasSupReportadas === horasSup ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Entregas -->
+                    <tr>
+                      <th scope="row">Entregas</th>
+                      <td>{{ horasEntregas }}</td>
+                      <td>{{ horasEntregasReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasEntregasReportadas === horasEntregas,
+                          'text-bg-danger': horasEntregasReportadas < horasEntregas
+                        }">
+                          {{ horasEntregasReportadas === horasEntregas ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Cobranza -->
+                    <tr>
+                      <th scope="row">Cobranza</th>
+                      <td>{{ horasCobranza }}</td>
+                      <td>{{ horasCobranzasReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasCobranzasReportadas === horasCobranza,
+                          'text-bg-danger': horasCobranzasReportadas < horasCobranza
+                        }">
+                          {{ horasCobranzasReportadas === horasCobranza ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Ventas -->
+                    <tr>
+                      <th scope="row">Ventas</th>
+                      <td>{{ horasVentas }}</td>
+                      <td>{{ horasVentasReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasVentasReportadas === horasVentas,
+                          'text-bg-danger': horasVentasReportadas < horasVentas
+                        }">
+                          {{ horasVentasReportadas === horasVentas ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- S/Renov -->
+                    <tr>
+                      <th scope="row">Sup. Renovación</th>
+                      <td>{{ horasRenov }}</td>
+                      <td>{{ horasRenovReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasRenovReportadas === horasRenov,
+                          'text-bg-danger': horasRenovReportadas < horasRenov
+                        }">
+                          {{ horasRenovReportadas === horasRenov ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Actividades sin código -->
+                    <tr>
+                      <th scope="row">Actividades sin código</th>
+                      <td>{{ horasSC }}</td>
+                      <td>{{ horasSCReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasSCReportadas === horasSC,
+                          'text-bg-danger': horasSCReportadas < horasSC
+                        }">
+                          {{ horasSCReportadas === horasSC ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Realizar Agenda -->
+                    <tr>
+                      <th scope="row">Realizar Agenda</th>
+                      <td>{{ horasReA }}</td>
+                      <td>{{ horasReAReportadas }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasReAReportadas === horasReA,
+                          'text-bg-danger': horasReAReportadas < horasReA
+                        }">
+                          {{ horasReAReportadas === horasReA ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <!-- Reunión -->
+                    <tr>
+                      <th scope="row">Reunión</th>
+                      <td>{{ horasReunion }}</td>
+                      <td>{{ horasReunionesRep }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'text-bg-success': horasReunionesRep === horasReunion,
+                          'text-bg-danger': horasReunionesRep < horasReunion
+                        }">
+                          {{ horasReunionesRep === horasReunion ? 'Logrado' : 'No logrado' }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!---->
+                
+                <!-- Gráficos -->
+                <div class="row">
+                  <div class="col-md-12 mb-4">
+                    <div class="card h-100">
+                      <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Distribución por Código</h5>
+                      </div>
+                      <div class="card-body">
+                        <canvas #graficaCodigo class="w-100" height="300"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                      <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Distribución de Horas</h5>
+                      </div>
+                      <div class="card-body">
+                        <canvas #graficaHoras class="w-100" height="300"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                      <div class="card h-100">
+                        <div class="card-header bg-light">
+                          <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Distribución de Horas</h5>
+                        </div>
+                        <div class="card-body">
+                          <div style="max-width: 600px;">
+                              <canvas #graficaProductividad class="chart-canvas"></canvas>
+                          </div>
+                        </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    <!--FIN CONTENIDO-->
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Activity - Enhanced Design -->
+<div class="modal fade" id="editarActividad" tabindex="-1" aria-labelledby="editarActividadLabel" aria-hidden="true" #modalEditar>
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg">
+
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fs-5 fw-semibold" id="editarActividadLabel">
+          <i class="fas fa-edit me-2"></i>Editar Actividad
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Modal Body -->
+
+      <div class="modal-body p-4">
+        <div class="table-responsive rounded-3 border">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="text-center bg-light-blue text-primary">Hora</th>
+                <th class="bg-light-blue text-primary">Domicilio</th>
+                <th class="bg-light-blue text-primary">Actividad</th>
+                <th class="bg-light-blue text-primary">Actividad Reportada</th>
+                <th class="bg-light-blue text-primary">Código Reportado</th>
+                <th class="text-center bg-light-blue text-primary">Estado</th>
+                <th class="text-center bg-light-blue text-primary">Hora Inicio</th>
+                <th class="text-center bg-light-blue text-primary">Hora Cierre</th>
+                <th class="text-center bg-light-blue text-primary">Actividad Acorde a Objetivo</th>
+                <th class="text-center bg-light-blue text-primary">KM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="actividadSeleccionada">
+                <!-- Hora -->
+                <td class="text-center">
+                  <input type="time" 
+                         class="form-control form-control-sm border-primary" 
+                         [(ngModel)]="actividadSeleccionada.hora"
+                         title="Hora programada">
+                </td>
+                
+                <!-- Domicilio -->
+                <td>
+                  <input type="text" 
+                         class="form-control form-control-sm border-primary" 
+                         [(ngModel)]="actividadSeleccionada.domicilio"
+                         placeholder="Nombre domicilio">
+                </td>
+                
+                <!-- Actividad -->
+                <td>
+                  <textarea class="form-control form-control-sm border-primary" 
+                            rows="2" 
+                            [(ngModel)]="actividadSeleccionada.actividad"
+                            placeholder="Descripción actividad"></textarea>
+                </td>
+                
+                <!-- Actividad Reportada -->
+                <td>
+                  <textarea class="form-control form-control-sm border-primary" 
+                            rows="2" 
+                            [(ngModel)]="actividadSeleccionada.actividadReportada"
+                            placeholder="Actividad realizada"></textarea>
+                </td>
+
+                                <!-- Codigo Reportado -->
+                <td>
+                  <input class="form-control form-control-sm border-primary" 
+                            rows="2" 
+                            [(ngModel)]="actividadSeleccionada.codigoReportado"
+                            placeholder="Actividad realizada">
+                </td>
+                
+                <!-- Estado Reportado -->
+                <td class="text-center">
+                  <select class="form-select form-select-sm" 
+                          [(ngModel)]="actividadSeleccionada.reportado"
+                          [ngClass]="{
+                            'border-success': actividadSeleccionada.reportado,
+                            'border-danger': !actividadSeleccionada.reportado
+                          }">
+                    <option [value]="true" class="text-success">✓ Reportado</option>
+                    <option [value]="false" class="text-danger">✗ No reportado</option>
+                  </select>
+                </td>
+                
+                <!-- Hora Reporte -->
+                <td class="text-center">
+                  <input type="time" 
+                         class="form-control form-control-sm border-primary" 
+                         [(ngModel)]="actividadSeleccionada.horaReporte"
+                         title="Hora de inicio real">
+                </td>
+                
+                <!-- Hora Cierre -->
+                <td class="text-center">
+                  <input type="time" 
+                         class="form-control form-control-sm border-primary" 
+                         [(ngModel)]="actividadSeleccionada.horaCierre"
+                         title="Hora de finalización">
+                </td>
+
+               <!-- checkbox -->
+                <td class="text-center">
+                  <input type="checkbox" 
+                         class="form-check-input" 
+                         [(ngModel)]="actividadSeleccionada.acordeObjetivo">
+                </td>
+
+                <!-- KM Recorridos -->
+                <td class="text-center">
+                  <div class="input-group input-group-sm">
+                    <input type="number" 
+                           class="form-control border-primary" 
+                           [(ngModel)]="actividadSeleccionada.kmRecorrido"
+                           min="0"
+                           step="0.1">
+                    <span class="input-group-text bg-light">km</span>
+                  </div>
+                </td>          
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Sección de Notas -->
+        <!-- <div class="mt-3">
+          <label class="form-label text-muted small">Notas adicionales:</label>
+          <textarea class="form-control" rows="2" placeholder="Agregue cualquier observación importante"></textarea>
+        </div>
+      </div> -->
+
+      <!-- Modal Footer -->
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" 
+                (click)="guardarCambios(actividadSeleccionada)"
+                >
+          <i class="fas fa-save me-1"></i>Guardar Cambios
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>

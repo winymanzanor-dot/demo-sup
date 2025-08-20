@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+h4 { font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; 
+    font-size: 24px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px; 
+} 
+
+h3 { font-family: "Century Gothic"; 
+    font-size: 20px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 400; 
+    line-height: 11px; } 
+
+.form-label{
+    font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+}
+
+.form-select{
+    font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+}
+
+th { font-family: "Century Gothic"; 
+    font-size: 15px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 20.4px; 
+}
+
+td { font-family: "Century Gothic"; 
+    font-size: 13px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 20.4px; 
+}
+
+td { font-family: "Century Gothic"; 
+    font-size: 13px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 400; 
+    line-height: 18.7px; }
+
+a { font-family: "Century Gothic"; 
+    font-size: 1px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 100; 
+    line-height: 18.7px;
+ }

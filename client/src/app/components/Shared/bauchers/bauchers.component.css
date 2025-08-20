@@ -1,0 +1,81 @@
+h5 { font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; 
+    font-size: 20px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px; 
+} 
+
+/* En tu archivo de estilos */
+select:disabled {
+  background-color: #f8f9fa;
+  opacity: 1; /* Mantiene el color completo */
+  cursor: not-allowed;
+}
+
+
+h4 { font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; 
+    font-size: 24px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px; 
+} 
+
+h3 { font-family: "Century Gothic"; 
+    font-size: 20px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 400; 
+    line-height: 11px; } 
+
+.form-label{
+    font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+}
+
+.form-select{
+    font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+}
+
+th { 
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; 
+    font-size: 16px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 22.4px;
+}
+
+td { font-family: "Century Gothic"; 
+    font-size: 16px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 400; 
+    line-height: 18.7px; 
+}
+p {
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; 
+    font-size: 12px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 400; 
+    line-height: 18.7px; 
+}
+
+/* Custom Styles */
+.max-w-1200 { max-width: 1200px; }
+.shadow-lg-hover { box-shadow: 0 1rem 3rem rgba(0,0,0,.1)!important; }
+.shadow-lg-hover:hover { box-shadow: 0 1rem 3rem rgba(0,0,0,.15)!important; }
+.section-divider {
+  width: 4px;
+  height: 28px;
+  border-radius: 2px;
+}
+.focus-ring-primary:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+}
+.hover-bg-success:hover { background: #198754!important; }
+.hover-bg-danger:hover { background: #dc3545!important; }
+.hover-text-white:hover { color: white!important; }
+.transition-all { transition: all 0.2s ease; }

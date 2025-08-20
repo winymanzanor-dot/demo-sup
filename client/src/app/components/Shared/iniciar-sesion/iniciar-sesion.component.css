@@ -1,0 +1,129 @@
+  .login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 420px;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .login-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    transition: transform 0.3s ease;
+  }
+
+  .login-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .login-logo {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .login-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .login-subtitle {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+  }
+
+  .form-label {
+    color: #2c3e50;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .form-control {
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    padding: 12px 15px;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  }
+
+  .input-group {
+    position: relative;
+  }
+
+  .btn-toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  .btn-toggle-password:hover {
+    color: #3498db;
+  }
+
+  .btn-login {
+    background: linear-gradient(to right, #3498db, #2980b9);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+  }
+
+  .forgot-link {
+    color: #7f8c8d;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+  }
+
+  .forgot-link:hover {
+    color: #3498db;
+    text-decoration: underline;
+  }
+
+  .alert-custom {
+    border-radius: 8px;
+    background-color: #fff5f5;
+    color: #e74c3c;
+    border: 1px solid #ffdddd;
+    padding: 12px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 576px) {
+    .login-card {
+      padding: 30px 20px;
+    }
+  }
